@@ -13,7 +13,7 @@ class  App extends React.Component {
       brk: 5, 
       session: 25, 
       currentSession: 25, 
-      currentSeconds: 60, 
+      currentSeconds: 11, 
       isPlay: true
     }
   }
@@ -23,10 +23,9 @@ class  App extends React.Component {
   }
   
   startTimeOut(){
-    
       interval = setInterval(() => {
         this.setState({
-          currentSeconds: (this.state.currentSeconds - 1)
+          currentSeconds: (this.state.currentSeconds > 1)?this.state.currentSeconds - 1: 60  
         })
         if(this.state.currentSeconds === 60) {
           this.setState({
@@ -79,7 +78,9 @@ class  App extends React.Component {
           <Col id="timer-laberl">
             Session
           </Col>
-          <Col id="time-left" dangerouslySetInnerHTML={{ __html: this.state.currentSession + ":" + ((this.state.currentSeconds === 60)? '00' : this.state.currentSeconds )}}>
+          <Col id="time-left" dangerouslySetInnerHTML={{ __html: this.state.currentSession + ":" + ((this.state.currentSeconds === 60)
+                                                                                                     ? '00' 
+                                                                                                     : (this.state.currentSeconds < 10)? "0"+this.state.currentSeconds : this.state.currentSeconds )}}>
           </Col>
         </Row>
         <Row> 
