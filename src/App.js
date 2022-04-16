@@ -13,27 +13,36 @@ class  App extends React.Component {
       brk: 5, 
       session: 25, 
       currentSession: 25, 
-      currentSeconds: 11, 
-      isPlay: true
+      currentSeconds: 60, 
+      isPlay: false
     }
   }
-  
-  clearTimeOut() {
 
+  clearTimeOut() {
+    clearInterval(interval)
+    this.setState({
+      currentSession: this.state.session, 
+      currentSeconds: 60, 
+      isPlay: false
+    })
   }
-  
   startTimeOut(){
+      
+      if(this.state.isPlay)
+      {
+        return
+      }
       interval = setInterval(() => {
+
         this.setState({
           currentSeconds: (this.state.currentSeconds > 1)?this.state.currentSeconds - 1: 60  
         })
         if(this.state.currentSeconds === 60) {
           this.setState({
-            currentSession: this.state.currentSession - 1
+            currentSession: (this.state.currentSession === 0)? this.state.brk - 1: this.state.currentSession - 1
           })
         }
       }, 1000); 
-      
       return () => clearInterval(interval)
   }
  
@@ -61,15 +70,22 @@ class  App extends React.Component {
           </Col>
           <Col>
             <Button onClick={() => {
+              this.clearTimeOut()
               this.setState({
-                session: this.state.session + 1
+                session: this.state.session + 1,
+                currentSession: this.state.session + 1
               }) 
               
             }} id="session-decrement"></Button>
             <Col id="session-length">{this.state.session}</Col>
             <Button onClick={() => {
+              this.clearTimeOut()
+              if(this.state.session === 0){
+                return 
+              }
               this.setState({
-                session: this.state.session - 1
+                session: this.state.session -1,
+                currentSession: this.state.session -1
               }) 
             }} id="session-increment"></Button>
           </Col>
@@ -80,20 +96,25 @@ class  App extends React.Component {
           </Col>
           <Col id="time-left" dangerouslySetInnerHTML={{ __html: this.state.currentSession + ":" + ((this.state.currentSeconds === 60)
                                                                                                      ? '00' 
-                                                                                                     : (this.state.currentSeconds < 10)? "0"+this.state.currentSeconds : this.state.currentSeconds )}}>
+                                                                                    : (this.state.currentSeconds < 10)? "0"+this.state.currentSeconds : this.state.currentSeconds )}}>
           </Col>
         </Row>
         <Row> 
           <Col>
             <Button onClick={() => {
              this.startTimeOut()
+             this.setState({
+               isPlay: true
+             })
             }}> Iniciar </Button>
             <Button onClick={() => {
               clearInterval(interval)
+              this.setState({
+                isPlay: false
+              })
             }}> Pausa </Button>
             <Button onClick={() => {
-              clearInterval(interval)
-              this.startTimeOut()
+             this.clearTimeOut() 
             }}>Detener</Button>
           </Col>
         </Row>
